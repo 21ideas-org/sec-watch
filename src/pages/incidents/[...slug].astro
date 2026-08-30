@@ -22,6 +22,10 @@ const start = posts[0];
 const isUpdate = start !== undefined && start.id !== entry.id;
 const { Content } = await render(entry);
 const date = dateLong(d.pubDate);
+// Продукт и вендор — надзаголовком. В треде из семи постов про Core Lightning
+// заголовки похожи, а «кто это сказал» различает их сразу. Вендор опускается,
+// когда совпадает с продуктом: «Core Lightning · Core Lightning» — не строка.
+const subject = [d.product, d.vendor !== d.product ? d.vendor : null].filter(Boolean).join(' · ');
 ---
 <Base
   title={d.title}
@@ -31,6 +35,7 @@ const date = dateLong(d.pubDate);
   pubDate={d.pubDate}
 >
   <article class="prose" style="padding-top: 32px">
+    {subject && <div class="eyebrow">{subject}</div>}
     <div class="tags">
       <Urgency tags={d.urgency} />
       {d.audience.map((a) => <span class="aud">{a}</span>)}

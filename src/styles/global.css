@@ -135,12 +135,6 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 }
 @media (max-width: 560px) { .board .digits { font-size: 33px; } }
 .board .digits .sep { color: var(--dim); font-weight: 400; }
-/* Обёртка сжимается по ширине цифр (inline-block вокруг блочного <time>),
-   поэтому подписи делят ровно ту же ширину на четыре и встают под своими
-   парами. Фиксированная ширина в em здесь не работает: она зависит от
-   кегля цифр, а он разный на десктопе и на мобильном. */
-.board .meter { display: inline-block; }
-.board .units { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; margin-top: 6px; font-size: 10px; letter-spacing: 0.08em; color: var(--dim); text-align: center; }
 .board .empty { margin: 12px 0 0; font-size: var(--fs-body); line-height: var(--lh-prose); color: var(--tx); max-width: 52ch; }
 .board .stats { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: var(--fs-xs); color: var(--mut); }
 .board .stats b { display: block; font-size: var(--fs-lg); font-weight: 600; color: var(--tx); font-variant-numeric: tabular-nums; margin-top: 2px; }

@@ -24,10 +24,10 @@ if (since) {
   since ? (
     <>
       <div class="kicker">С последней уязвимости</div>
-      <div class="meter">
-        <time class="digits" datetime={iso} data-since={iso}>{initial}</time>
-        <div class="units"><span>ДНИ</span><span>ЧАС</span><span>МИН</span><span>СЕК</span></div>
-      </div>
+      {/* Подписей ДНИ/ЧАС/МИН/СЕК нет: четыре пары через двоеточие читаются как
+          время без объяснения, а подпись под каждой парой заставляла держать
+          обёртку .meter только ради выравнивания четырёх колонок. */}
+      <time class="digits" datetime={iso} data-since={iso}>{initial}</time>
     </>
   ) : (
     /* День до первой публикации. Прочерк вместо цифр выглядел бы сломанным
