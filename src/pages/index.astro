@@ -49,10 +49,8 @@ const latestDate = latest && dateShort(latest.data.pubDate);
   {
     rest.length > 0 && (
       <section class="sec">
-        <div class="sec-h">
-          <h2>Раньше</h2>
-          <a class="more" href="/feed">все инциденты →</a>
-        </div>
+        {/* Как и у хроник: заголовок ведёт в ленту, отдельной ссылки справа нет. */}
+        <div class="sec-h"><h2><a href="/feed">Ранее</a></h2></div>
         <div class="rows">{rest.map((e) => <Row entry={e} />)}</div>
       </section>
     )
