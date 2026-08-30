@@ -23,8 +23,8 @@ const hist = archive(list);
 
   {
     hist.length > 0 && (
-      <section class="sec">
-        <div class="sec-h"><h2>Хроника с 2013 года</h2></div>
+      <section class="sec" id="archive">
+        <div class="sec-h"><h2>Хроники</h2></div>
         <div class="rows arch">{hist.map((e) => <Row entry={e} />)}</div>
         <p class="note">
           Ведётся руками: заметные уязвимости биткоин-софта до появления канала. Ссылки

@@ -61,9 +61,10 @@ const latestDate = latest && dateShort(latest.data.pubDate);
   {
     hist.length > 0 && (
       <section class="sec">
-        <div class="sec-h"><h2>Хроника с 2013 года</h2></div>
+        {/* Заголовок — ссылка на ту же секцию в ленте: на главной хроника обрезана
+            восемью строками, и «показать остальные» здесь единственное, что нужно. */}
+        <div class="sec-h"><h2><a href="/feed#archive">Хроники</a></h2></div>
         <div class="rows arch">{hist.map((e) => <Row entry={e} />)}</div>
-        <p class="note">Ведётся руками. В оповещения и RSS не попадает, счётчик не обнуляет.</p>
       </section>
     )
   }

@@ -170,6 +170,12 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
 .sec-h h2, .sec-h h1 { margin: 0; font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx); }
 .sec-h .more { font-size: var(--fs-sm); }
+/* Заголовок-ссылка. Подчёркивание постоянное, а не по наведению: на телефоне
+   наведения нет вовсе, и кликабельность заголовка иначе ничем не выдана. */
+.sec-h h2 a { color: inherit; border-bottom-color: var(--hair); }
+.sec-h h2 a:hover { color: var(--sig); border-bottom-color: var(--sig); }
+/* Якорь не должен упираться в край окна. */
+#archive { scroll-margin-top: 24px; }
 
 /* ⚠️ Линеек между строками НЕТ. Линейка поверх разлиновки — это две сетки
    друг на друге, и обе проигрывают. Строка отделяется собственной подсветкой,
