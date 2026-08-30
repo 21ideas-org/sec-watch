@@ -1,0 +1,236 @@
+/* ─────────────────────────────────────────────────────────────
+   sec_₿ — глобальные стили. Чистый CSS, только переменные и классы.
+   Тёмная («табло») — база в :root. Светлая («бюллетень») — переопределение.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --bg:      #0b0d12;
+  --sur:     #13161f;
+  --tx:      #e4e8f0;
+  --mut:     #7d8698;
+  --dim:     #4c5465;
+  --bd:      #2a3142;
+  --hair:    #222836;
+  --grid:    rgba(228, 232, 240, 0.032);
+  --rowbg:   rgba(228, 232, 240, 0.035);
+  --rowbg-h: rgba(228, 232, 240, 0.075);
+  --sig:     #7fa9e8;
+  /* ⚠️ На тёмном жёсткая тень СВЕТЛЕЕ фона — иначе её физически не видно.
+     Приём тот же, что на светлой, знак противоположный. */
+  --shadow:  #303950;
+
+  --crit-bg: transparent; --crit-fg: #ff6a5c;
+  --warn-bg: transparent; --warn-fg: #f2a63d;
+  --ok-bg:   transparent; --ok-fg:   #4fc884;
+
+  --font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --fs-xs: 11px; --fs-sm: 12.5px; --fs-base: 15px; --fs-body: 16px;
+  --fs-lg: 20px; --fs-h2: 24px; --fs-h1: 30px;
+  --lh-ui: 1.5; --lh-prose: 1.75;
+
+  --step: 16px;             /* шаг разлиновки; отступы кратны ему */
+  --maxw: 720px;
+  --t: 120ms linear;
+}
+
+/* Явный выбор «светлая» и системная светлая при отсутствии выбора. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:      #eceae5;
+    --sur:     #f7f6f3;
+    --tx:      #14150f;
+    --mut:     #56584c;
+    --dim:     #8d8f82;
+    --bd:      #14150f;
+    --hair:    #c9c7bf;
+    --grid:    rgba(20, 21, 15, 0.045);
+    --rowbg:   rgba(20, 21, 15, 0.038);
+    --rowbg-h: rgba(20, 21, 15, 0.075);
+    --sig:     #1b3fa0;
+    --shadow:  #14150f;
+    --crit-bg: #f6dbd5; --crit-fg: #8f2418;
+    --warn-bg: #fbeec2; --warn-fg: #8a6a05;
+    --ok-bg:   #dde9d7; --ok-fg:   #2a5c33;
+  }
+}
+:root[data-theme="light"] {
+  --bg:      #eceae5;
+  --sur:     #f7f6f3;
+  --tx:      #14150f;
+  --mut:     #56584c;
+  --dim:     #8d8f82;
+  --bd:      #14150f;
+  --hair:    #c9c7bf;
+  --grid:    rgba(20, 21, 15, 0.045);
+  --rowbg:   rgba(20, 21, 15, 0.038);
+  --rowbg-h: rgba(20, 21, 15, 0.075);
+  --sig:     #1b3fa0;
+  --shadow:  #14150f;
+  --crit-bg: #f6dbd5; --crit-fg: #8f2418;
+  --warn-bg: #fbeec2; --warn-fg: #8a6a05;
+  --ok-bg:   #dde9d7; --ok-fg:   #2a5c33;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  /* Разлиновка. Шаг --step, поля кратны ему: иначе клетка читается как
+     текстура под текстом, а не как бланк. */
+  background-image:
+    repeating-linear-gradient(to right,  var(--grid) 0 1px, transparent 1px var(--step)),
+    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px var(--step));
+  background-position: -1px -1px;
+  background-attachment: fixed;
+  color: var(--tx);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: var(--lh-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--sig); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color var(--t); }
+a:hover { border-bottom-color: var(--sig); }
+a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
+::selection { background: var(--sig); color: var(--bg); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+.shell { max-width: var(--maxw); margin: 0 auto; padding: 32px 32px 96px; }
+@media (max-width: 560px) { .shell { padding: 16px 16px 64px; } }
+
+/* ─── Шапка ─── */
+.top {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-size: var(--fs-xs); letter-spacing: 0.07em; color: var(--dim);
+  padding-bottom: 11px; border-bottom: 1px solid var(--hair);
+}
+.top .tt { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; letter-spacing: inherit; }
+.top .tt:hover { color: var(--tx); }
+.nav { display: flex; flex-wrap: wrap; gap: 18px; font-size: var(--fs-sm); padding: 12px 0 0; }
+.nav a { color: var(--mut); border-bottom: none; }
+.nav a:hover { color: var(--tx); }
+.nav a[aria-current="page"] { color: var(--tx); font-weight: 600; box-shadow: inset 0 -2px 0 var(--sig); }
+@media (max-width: 560px) { .nav { gap: 13px; font-size: var(--fs-xs); } }
+
+/* ─── Панель: непрозрачна, поэтому клетка под ней обрывается, и жёсткая тень
+       читается как высота. Панелей на странице единицы — парение означает
+       «это главное», а не украшение. ─── */
+.panel { background: var(--sur); border: 1px solid var(--bd); box-shadow: 5px 5px 0 var(--shadow); }
+@media (max-width: 560px) { .panel { box-shadow: 3px 3px 0 var(--shadow); } }
+
+/* ─── Приборная сводка ─── */
+.board { margin-top: 32px; padding: 24px 24px 20px; }
+@media (max-width: 560px) { .board { margin-top: 16px; padding: 16px 16px 15px; } }
+.board .kicker { font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); }
+.board .digits {
+  display: block; margin-top: 10px; color: var(--tx);
+  font-variant-numeric: tabular-nums; font-weight: 700;
+  font-size: 54px; line-height: 1; letter-spacing: -0.035em;
+}
+@media (max-width: 560px) { .board .digits { font-size: 33px; } }
+.board .digits .sep { color: var(--dim); font-weight: 400; }
+/* Обёртка сжимается по ширине цифр (inline-block вокруг блочного <time>),
+   поэтому подписи делят ровно ту же ширину на четыре и встают под своими
+   парами. Фиксированная ширина в em здесь не работает: она зависит от
+   кегля цифр, а он разный на десктопе и на мобильном. */
+.board .meter { display: inline-block; }
+.board .units { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; margin-top: 6px; font-size: 10px; letter-spacing: 0.08em; color: var(--dim); text-align: center; }
+.board .empty { margin: 12px 0 0; font-size: var(--fs-body); line-height: var(--lh-prose); color: var(--tx); max-width: 52ch; }
+.board .stats { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: var(--fs-xs); color: var(--mut); }
+.board .stats b { display: block; font-size: var(--fs-lg); font-weight: 600; color: var(--tx); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.board .stats .hot b { color: var(--warn-fg); }
+
+/* ─── Ярлыки ─── */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.u { font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; padding: 3px 7px; border: 1px solid; }
+.u-crit { background: var(--crit-bg); color: var(--crit-fg); border-color: var(--crit-fg); }
+.u-warn { background: var(--warn-bg); color: var(--warn-fg); border-color: var(--warn-fg); }
+.u-ok   { background: var(--ok-bg);   color: var(--ok-fg);   border-color: var(--ok-fg); }
+/* Ярлык, которого сайт ещё не знает: нейтрально, но видимо. Сборку не роняем. */
+.u-neutral { background: transparent; color: var(--mut); border-color: var(--dim); }
+.aud { font-size: var(--fs-xs); color: var(--mut); }
+.when { margin-left: auto; }
+
+/* ─── Карточка последнего инцидента ─── */
+.latest { padding-top: 40px; }
+@media (max-width: 560px) { .latest { padding-top: 28px; } }
+.eyebrow { font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); margin-bottom: 12px; }
+.card { padding: 20px 24px 22px; border-left-width: 5px; }
+@media (max-width: 560px) { .card { padding: 15px 16px 17px; } }
+.card h2 { margin: 12px 0 10px; font-size: var(--fs-h2); font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; text-wrap: balance; }
+@media (max-width: 560px) { .card h2 { font-size: var(--fs-lg); } }
+.card h2 a { color: var(--tx); border-bottom: none; }
+.card h2 a:hover { color: var(--sig); }
+.card p { margin: 0; font-size: var(--fs-body); line-height: var(--lh-prose); max-width: 58ch; }
+.card .go { display: inline-block; margin-top: 14px; font-size: var(--fs-sm); font-weight: 600; }
+
+/* ─── Секции и строки ─── */
+.sec { padding-top: 40px; }
+@media (max-width: 560px) { .sec { padding-top: 28px; } }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.sec-h h2, .sec-h h1 { margin: 0; font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx); }
+.sec-h .more { font-size: var(--fs-sm); }
+
+/* ⚠️ Линеек между строками НЕТ. Линейка поверх разлиновки — это две сетки
+   друг на друге, и обе проигрывают. Строка отделяется собственной подсветкой,
+   полупрозрачной: клетка сквозь неё просвечивает, поэтому строка остаётся
+   ЛЕЖАЩЕЙ на странице, в отличие от панели, которая над ней поднята. */
+.rows { display: grid; gap: 3px; }
+.row {
+  display: grid; grid-template-columns: 100px 1fr auto; gap: 15px;
+  align-items: start; padding: 12px 14px;
+  background: var(--rowbg); transition: background var(--t);
+}
+.row:hover { background: var(--rowbg-h); }
+.row .dt { font-size: var(--fs-sm); font-variant-numeric: tabular-nums; color: var(--mut); }
+.row .ti { font-size: 14.5px; font-weight: 600; color: var(--tx); line-height: 1.4; }
+.row .ti a { color: inherit; border-bottom: none; }
+.row:hover .ti a { color: var(--sig); }
+.row .de { font-size: var(--fs-sm); color: var(--mut); margin-top: 4px; line-height: 1.55; }
+.row .rt { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 620px) {
+  .row { grid-template-columns: 1fr; row-gap: 6px; }
+  .row .rt { justify-content: flex-start; }
+}
+.rows.arch .row { background: color-mix(in srgb, var(--rowbg) 55%, transparent); }
+.rows.arch .row:hover { background: var(--rowbg-h); }
+.rows.arch .dt { color: var(--dim); }
+.rows.arch .ti { font-weight: 500; color: var(--mut); }
+.ext { font-size: var(--fs-xs); color: var(--dim); white-space: nowrap; }
+.note { font-size: var(--fs-xs); color: var(--dim); line-height: 1.6; margin-top: 12px; }
+
+/* ─── Страница инцидента и текстовые страницы ─── */
+.prose { font-size: var(--fs-body); line-height: var(--lh-prose); max-width: 62ch; }
+.prose h1 { font-size: var(--fs-h1); font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; margin: 14px 0 12px; text-wrap: balance; }
+@media (max-width: 560px) { .prose h1 { font-size: var(--fs-h2); } }
+.prose h2 { font-size: var(--fs-lg); font-weight: 700; margin: 32px 0 10px; }
+.prose h3 { font-size: var(--fs-base); font-weight: 700; margin: 24px 0 8px; }
+.prose p, .prose ul, .prose ol { margin: 0 0 16px; }
+.prose ul, .prose ol { padding-left: 22px; }
+.prose li { margin-bottom: 8px; }
+.prose code { font-size: 0.9em; background: var(--rowbg); padding: 1px 5px; }
+.prose hr { border: 0; border-top: 1px solid var(--hair); margin: 32px 0; }
+.prose blockquote { margin: 0 0 16px; padding-left: 16px; border-left: 3px solid var(--hair); color: var(--mut); }
+
+.action { margin: 24px 0 28px; padding: 16px 18px; border-left-width: 5px; border-left-color: var(--warn-fg); }
+.action .k { font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); }
+.action p { margin: 8px 0 0; font-size: var(--fs-body); line-height: var(--lh-prose); }
+
+.links { margin-top: 28px; }
+.links h2 { font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 10px; }
+.links ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.links li { font-size: var(--fs-sm); }
+
+/* ─── Реквизиты ─── */
+.addr { display: grid; gap: 6px; margin: 12px 0 24px; }
+.addr .k { font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); }
+.addr code { display: block; overflow-wrap: anywhere; font-size: var(--fs-sm); background: var(--rowbg); padding: 10px 12px; }
+
+/* ─── Подвал ─── */
+.foot { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: var(--fs-xs); color: var(--dim); }

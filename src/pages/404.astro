@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_NAME } from '../consts.ts';
+---
+<Base title={`Страница собирается — ${SITE_NAME}`} description="Страница ещё не собрана либо адрес неверный.">
+  <!--
+    ⚠️ Это НЕ обычная 404, и так задумано.
+
+    Оповещение уезжает в Telegram после того, как страница ответила 200, но
+    у ожидания есть потолок: если сборка не уложилась, ссылка уходит всё равно —
+    опоздавшая на три минуты страница дешевле неотправленного алерта. В это
+    окно читатель попадает сюда, и «не найдено» было бы враньём.
+
+    Цена решения: опечатка в адресе покажет то же самое. Принято сознательно —
+    честнее сказать «подожди» о странице, которая появится, чем «нет такой».
+  -->
+  <section class="latest">
+    <div class="eyebrow">Страница пока недоступна</div>
+    <article class="card panel" style="border-left-color: var(--warn-fg)">
+      <h2>Страница собирается</h2>
+      <p>
+        Если вы пришли по свежей ссылке из оповещения, страница ещё публикуется —
+        обновите её через минуту. Если ждать дольше минуты, возможны неполадки
+        у хостинга: текст оповещения доступен в самом сообщении канала.
+      </p>
+      <p style="margin-top: 12px">
+        Возможно, в адресе опечатка — тогда всё нужное лежит в <a href="/feed">списке инцидентов</a>.
+      </p>
+      <button class="go" type="button" data-reload
+        style="background:none;border:0;padding:0;font:inherit;color:var(--sig);cursor:pointer;border-bottom:1px solid var(--sig)">
+        Обновить страницу
+      </button>
+    </article>
+  </section>
+  <script>
+    document.querySelector('[data-reload]')?.addEventListener('click', () => location.reload());
+  </script>
+</Base>

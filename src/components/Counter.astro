@@ -1,0 +1,61 @@
+---
+interface Props { since: Date | null; }
+const { since } = Astro.props;
+
+/**
+ * ⚠️ Цифра рендерится НА СБОРКЕ и уточняется скриптом до секунд.
+ *
+ * Без скрипта страница показывает устаревшее, но всегда ЗАНИЖЕННОЕ значение:
+ * счётчик только растёт, а новый инцидент сам вызывает пересборку. Поэтому
+ * ночной пересборки по расписанию нет — она чинила бы то, что и так ошибается
+ * в безопасную сторону, ценой второго источника правды.
+ */
+const pad = (n: number) => String(n).padStart(2, '0');
+const iso = since ? since.toISOString() : '';
+let initial = '';
+if (since) {
+  const s = Math.max(0, Math.floor((Date.now() - since.valueOf()) / 1000));
+  initial = [Math.floor(s / 86400), Math.floor((s % 86400) / 3600), Math.floor((s % 3600) / 60), s % 60]
+    .map(pad)
+    .join(':');
+}
+---
+{
+  since ? (
+    <>
+      <div class="kicker">С последней уязвимости</div>
+      <div class="meter">
+        <time class="digits" datetime={iso} data-since={iso}>{initial}</time>
+        <div class="units"><span>ДНИ</span><span>ЧАС</span><span>МИН</span><span>СЕК</span></div>
+      </div>
+    </>
+  ) : (
+    /* День до первой публикации. Прочерк вместо цифр выглядел бы сломанным
+       счётчиком, а счётчик — главное обещание главной страницы. */
+    <>
+      <div class="kicker">Наблюдение идёт</div>
+      <p class="empty">
+        Оповещений пока не было. Счётчик пойдёт с первой уязвимости, которую канал
+        сочтёт критической.
+      </p>
+    </>
+  )
+}
+
+<script>
+  const el = document.querySelector<HTMLTimeElement>('[data-since]');
+  const since = el?.dataset.since ? Date.parse(el.dataset.since) : NaN;
+  if (el && !Number.isNaN(since)) {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const tick = () => {
+      const s = Math.max(0, Math.floor((Date.now() - since) / 1000));
+      el.innerHTML =
+        pad(Math.floor(s / 86400)) + '<span class="sep">:</span>' +
+        pad(Math.floor((s % 86400) / 3600)) + '<span class="sep">:</span>' +
+        pad(Math.floor((s % 3600) / 60)) + '<span class="sep">:</span>' +
+        pad(s % 60);
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>

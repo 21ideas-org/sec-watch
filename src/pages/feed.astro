@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Row from '../components/Row.astro';
+import { allIncidents, own, archive } from '../lib.ts';
+import { SITE_NAME } from '../consts.ts';
+
+const list = await allIncidents();
+const posts = own(list);
+const hist = archive(list);
+---
+<Base
+  title={`Инциденты — ${SITE_NAME}`}
+  description="Все публикации канала: уязвимости, патчи и активная эксплуатация."
+>
+  <section class="sec">
+    <div class="sec-h"><h1>Инциденты</h1><a class="more" href="/rss.xml">RSS</a></div>
+    {
+      posts.length > 0
+        ? <div class="rows">{posts.map((e) => <Row entry={e} />)}</div>
+        : <p class="note">Публикаций пока нет. Канал ждёт первого критического сигнала.</p>
+    }
+  </section>
+
+  {
+    hist.length > 0 && (
+      <section class="sec">
+        <div class="sec-h"><h2>Хроника с 2013 года</h2></div>
+        <div class="rows arch">{hist.map((e) => <Row entry={e} />)}</div>
+        <p class="note">
+          Ведётся руками: заметные уязвимости биткоин-софта до появления канала. Ссылки
+          ведут на первоисточники. В RSS не попадает и счётчик не обнуляет.
+        </p>
+      </section>
+    )
+  }
+</Base>

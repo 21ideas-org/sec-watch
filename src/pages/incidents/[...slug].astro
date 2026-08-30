@@ -1,0 +1,70 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Urgency from '../../components/Urgency.astro';
+import { ogFor } from '../../consts.ts';
+import { allIncidents, own } from '../../lib.ts';
+
+export async function getStaticPaths() {
+  const list = await allIncidents();
+  // Хроника собственной страницы не получает: её ссылка ведёт на первоисточник.
+  return own(list).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+// ru-RU дописывает « г.» к длинной дате — в шапке оповещения это шум.
+const date = d.pubDate
+  .toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+  .replace(/\s*г\.$/, '');
+---
+<Base
+  title={d.title}
+  description={d.description}
+  image={ogFor(d.urgency)}
+  type="article"
+  pubDate={d.pubDate}
+>
+  <article class="prose" style="padding-top: 32px">
+    <div class="tags">
+      <Urgency tags={d.urgency} />
+      {d.audience.map((a) => <span class="aud">{a}</span>)}
+      <span class="aud when">{date}</span>
+    </div>
+    <h1>{d.title}</h1>
+    {d.description && <p>{d.description}</p>}
+
+    {
+      d.action && (
+        <div class="action panel">
+          <div class="k">Что делать</div>
+          <p>{d.action}</p>
+        </div>
+      )
+    }
+
+    <Content />
+
+    {
+      d.links.length > 0 && (
+        <div class="links">
+          <h2>Первоисточники</h2>
+          <ul>
+            {d.links.map((l) => (
+              <li><a href={l.url} rel="noopener">{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    {
+      d.telegramUrl && (
+        <p class="note">
+          Это оповещение в Telegram: <a href={d.telegramUrl} rel="noopener">пост</a>
+        </p>
+      )
+    }
+  </article>
+</Base>

@@ -1,0 +1,13 @@
+---
+import { URGENCY_ORDER, urgencyClass } from '../consts.ts';
+interface Props { tags: string[]; }
+const { tags } = Astro.props;
+// Порядок остроты — от горящего к спокойному. Незнакомые ярлыки уезжают
+// в хвост, но показываются: сборку роняет только исключение, не новый тег.
+const rank = (t: string) => {
+  const i = (URGENCY_ORDER as readonly string[]).indexOf(t);
+  return i === -1 ? URGENCY_ORDER.length : i;
+};
+const sorted = [...tags].sort((a, b) => rank(a) - rank(b));
+---
+{sorted.map((t) => <span class={`u ${urgencyClass(t)}`}>{t}</span>)}

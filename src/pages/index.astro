@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import Counter from '../components/Counter.astro';
+import Row from '../components/Row.astro';
+import Urgency from '../components/Urgency.astro';
+import { SITE_NAME, SITE_DESCRIPTION } from '../consts.ts';
+import { allIncidents, own, archive, threadStarts, counterAnchor, stats } from '../lib.ts';
+
+const list = await allIncidents();
+const posts = own(list);
+const latest = posts[0];
+const rest = posts.slice(1, 6);
+const hist = archive(list).slice(0, 8);
+const anchor = counterAnchor(list);
+const s = stats(list);
+const latestDate = latest?.data.pubDate.toLocaleDateString('ru-RU', {
+  day: '2-digit', month: '2-digit', year: 'numeric',
+});
+---
+<Base title={`${SITE_NAME} — критические оповещения для биткоинеров`} description={SITE_DESCRIPTION}>
+  <section class="board panel">
+    <Counter since={anchor} />
+    <div class="stats">
+      <span class="hot">открыто без патча<b>{s.unpatched}</b></span>
+      <span>инцидентов за год<b>{s.lastYear}</b></span>
+      <span>всего в архиве<b>{threadStarts(list).length}</b></span>
+    </div>
+  </section>
+
+  {
+    latest && (
+      <section class="latest">
+        <div class="eyebrow">Последний инцидент</div>
+        <article class="card panel" style={`border-left-color: var(--${latest.data.urgency.includes('#эксплуатируется') ? 'crit' : latest.data.urgency.includes('#патча_нет') ? 'warn' : 'ok'}-fg)`}>
+          <div class="tags">
+            <Urgency tags={latest.data.urgency} />
+            {latest.data.audience.map((a) => <span class="aud">{a}</span>)}
+            <span class="aud when">{latestDate}</span>
+          </div>
+          <h2><a href={`/incidents/${latest.id}/`}>{latest.data.title}</a></h2>
+          <p>{latest.data.description}</p>
+          <a class="go" href={`/incidents/${latest.id}/`}>Подробности →</a>
+        </article>
+      </section>
+    )
+  }
+
+  {
+    rest.length > 0 && (
+      <section class="sec">
+        <div class="sec-h">
+          <h2>Раньше</h2>
+          <a class="more" href="/feed">все инциденты →</a>
+        </div>
+        <div class="rows">{rest.map((e) => <Row entry={e} />)}</div>
+      </section>
+    )
+  }
+
+  {
+    hist.length > 0 && (
+      <section class="sec">
+        <div class="sec-h"><h2>Хроника с 2013 года</h2></div>
+        <div class="rows arch">{hist.map((e) => <Row entry={e} />)}</div>
+        <p class="note">Ведётся руками. В оповещения и RSS не попадает, счётчик не обнуляет.</p>
+      </section>
+    )
+  }
+</Base>
