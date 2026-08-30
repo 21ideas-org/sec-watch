@@ -271,10 +271,28 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 .thread li[aria-current] { background: var(--rowbg-h); }
 .thread .self { color: var(--tx); font-weight: 600; }
 
-/* ─── Реквизиты ─── */
-.addr { display: grid; gap: 6px; margin: 12px 0 24px; }
-.addr .k { font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); }
-.addr code { display: block; overflow-wrap: anywhere; font-size: var(--fs-sm); background: var(--rowbg); padding: 10px 12px; }
+/* ─── Реквизиты (см. CopyBlock.astro; имена классов общие с gm-web) ─── */
+.code-wrap { margin: 12px 0 24px; }
+.code-toolbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.code-lang { font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); }
+.code-copy {
+  background: none; border: 1px solid transparent; color: var(--mut);
+  font: inherit; font-size: var(--fs-xs); padding: 2px 8px; cursor: pointer;
+  transition: color var(--t), border-color var(--t);
+}
+.code-copy:hover { color: var(--tx); border-color: var(--bd); }
+.code-copy:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; color: var(--tx); }
+/* ⚠️ Ни успех, ни ошибка НЕ красятся в красный/жёлтый/зелёный. Эти три цвета на сайте
+   означают срочность, и цветное пятно обязано означать ровно одно; «скопировано»
+   зелёным читалось бы как «патч есть». Состояние несёт подпись, а не цвет. */
+.code-copy[data-state] { color: var(--tx); border-color: var(--bd); }
+/* Адрес переносится, а не уезжает в горизонтальную прокрутку: bech32 длиннее колонки. */
+pre.code-block {
+  margin: 0; padding: 10px 12px; background: var(--rowbg);
+  font-family: inherit; font-size: var(--fs-sm);
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+pre.code-block code { background: none; padding: 0; font-size: inherit; }
 
 /* ─── Подвал ─── */
 .foot { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: var(--fs-xs); color: var(--dim); }

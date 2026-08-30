@@ -1,0 +1,53 @@
+---
+/**
+ * Один реквизит с кнопкой «копировать».
+ *
+ * ⚠️ Разметка та же, что у `CopyBlock` в gm-web (`.code-wrap > .code-toolbar(.code-lang
+ * + .code-copy) + pre.code-block`) — чтобы правка поведения на одном сайте переносилась
+ * на другой без перевода. Расходится только раскладка: тулбар здесь стоит в потоке над
+ * блоком, а не абсолютом поверх него, потому что поля на этом сайте кратны клетке.
+ *
+ * ⚠️ В буфер уходит РОВНО видимый текст (`pre.innerText`), а не отдельное значение.
+ * Кнопка, кладущая в буфер не то, что показано, — это буквально приём подмены
+ * платёжного реквизита, и на странице, которая учит сверять адрес глазами, разводить
+ * показ и копирование нельзя.
+ */
+interface Props {
+  label: string;
+  value: string;
+}
+const { label, value } = Astro.props;
+---
+<div class="code-wrap">
+  <div class="code-toolbar">
+    <span class="code-lang">{label}</span>
+    <button type="button" class="code-copy" aria-live="polite">копировать</button>
+  </div>
+  <pre class="code-block"><code>{value}</code></pre>
+</div>
+
+<script>
+  // Делегирование, а не слушатель на каждую кнопку: Astro кладёт скрипт компонента
+  // на страницу один раз, сколько бы реквизитов на ней ни стояло.
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest('.code-copy');
+    if (!(btn instanceof HTMLButtonElement)) return;
+    const pre = btn.closest('.code-wrap')?.querySelector('pre');
+    if (!pre) return;
+    const restore = () => {
+      btn.removeAttribute('data-state');
+      btn.textContent = 'копировать';
+    };
+    const say = (state: string, text: string) => {
+      btn.dataset.state = state;
+      btn.textContent = text;
+      window.setTimeout(restore, 1600);
+    };
+    navigator.clipboard
+      .writeText(pre.innerText)
+      .then(() => say('copied', 'скопировано'))
+      .catch(() => say('error', 'не вышло'));
+  });
+</script>

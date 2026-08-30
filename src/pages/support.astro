@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import CopyBlock from '../components/CopyBlock.astro';
 import { SITE_NAME, SUPPORT_LN_ADDRESS, SUPPORT_ONCHAIN } from '../consts.ts';
 ---
 <Base title={`Поддержать · ${SITE_NAME}`} description="Реквизиты для поддержки канала критических security-оповещений.">
@@ -10,14 +11,8 @@ import { SITE_NAME, SUPPORT_LN_ADDRESS, SUPPORT_ONCHAIN } from '../consts.ts';
       судит каждый входящий сигнал.
     </p>
 
-    <div class="addr">
-      <span class="k">Lightning</span>
-      <code>{SUPPORT_LN_ADDRESS}</code>
-    </div>
-    <div class="addr">
-      <span class="k">Onchain</span>
-      <code>{SUPPORT_ONCHAIN}</code>
-    </div>
+    <CopyBlock label="Lightning" value={SUPPORT_LN_ADDRESS} />
+    <CopyBlock label="Onchain" value={SUPPORT_ONCHAIN} />
 
     <p class="note">
       Эти реквизиты публикуются только здесь и никогда — в тексте оповещений.
