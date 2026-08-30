@@ -1,7 +1,32 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { SITE_DESCRIPTION, SITE_NAME } from '../consts.ts';
-import { allIncidents, own } from '../lib.ts';
+import { allIncidents, own, type Incident } from '../lib.ts';
+
+const esc = (t: string) =>
+  t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/**
+ * Тело элемента фида.
+ *
+ * ⚠️ Собирается из полей, а не берётся из `body`. Пост канала целиком укладывается
+ * во фронтматтер (заголовок, описание, «что делать», ссылки), и тело у такого файла
+ * пустое — а пустая строка мимо `??` проходит, то есть полнотекстовый фид уезжал бы
+ * подписчику с пустыми элементами. Вылезло на бэкфиле 30.08.2026, где пустых тел
+ * оказалось десять из десяти.
+ *
+ * ⚠️ «Что делать» входит в тело намеренно: ридер показывает элемент целиком и никуда
+ * не докликивает, а это единственная строка поста, ради которой он написан.
+ */
+function itemContent(e: Incident): string {
+  return [
+    e.data.description && `<p>${esc(e.data.description)}</p>`,
+    e.data.action && `<p><strong>Что делать:</strong> ${esc(e.data.action)}</p>`,
+    e.body?.trim(),
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
 
 /**
  * Полнотекстовый фид: аудитория операторов нод читает ридерами.
@@ -21,7 +46,7 @@ export async function GET(context: APIContext) {
       description: e.data.description,
       pubDate: e.data.pubDate,
       link: `/incidents/${e.id}/`,
-      content: e.body ?? e.data.description,
+      content: itemContent(e),
       categories: [...e.data.urgency, ...e.data.audience],
     })),
     customData: '<language>ru</language>',

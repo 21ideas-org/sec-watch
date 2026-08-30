@@ -192,7 +192,16 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 .row .ti { font-size: 14.5px; font-weight: 600; color: var(--tx); line-height: 1.4; }
 .row .ti a { color: inherit; border-bottom: none; }
 .row:hover .ti a { color: var(--sig); }
-.row .de { font-size: var(--fs-sm); color: var(--mut); margin-top: 4px; line-height: 1.55; }
+.row .de {
+  font-size: var(--fs-sm); color: var(--mut); margin-top: 4px; line-height: 1.55;
+  /* ⚠️ Две строки, дальше обрыв. Описание в посте канала — целый абзац на 300–600
+     знаков; десять таких подряд превращают ленту в сплошной текст, в котором не
+     видно ни дат, ни ярлыков, то есть ровно того, ради чего лента и нужна. */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+/* Апдейт треда в ленте. Стрелка, а не слово: колонка узкая, а на 390px строка и так
+   переносится, и лишнее слово съело бы заголовок. */
+.row .upd { color: var(--dim); margin-right: 6px; }
 .row .rt { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 620px) {
   .row { grid-template-columns: 1fr; row-gap: 6px; }
@@ -220,12 +229,33 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 
 .action { margin: 24px 0 28px; padding: 16px 18px; border-left-width: 5px; border-left-color: var(--warn-fg); }
 .action .k { font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); }
+/* Ключ командной строки целиком, без переноса по собственному дефису (`keepFlags`). */
+.nb { white-space: nowrap; }
 .action p { margin: 8px 0 0; font-size: var(--fs-body); line-height: var(--lh-prose); }
 
 .links { margin-top: 28px; }
 .links h2 { font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 10px; }
 .links ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .links li { font-size: var(--fs-sm); }
+
+/* ─── Тред инцидента ─── */
+/* Апдейт называет свой инцидент до заголовка: читатель приходит по ссылке из канала
+   на произвольный пост, и «BTCPay обновил CLN» без этой строки висит в воздухе. */
+.up-of { margin: 0; font-size: var(--fs-sm); color: var(--mut); }
+
+.thread { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--hair); }
+.thread h2 { font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 10px; }
+.thread ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.thread li {
+  display: grid; grid-template-columns: 46px 1fr; gap: 12px;
+  margin: 0; padding: 9px 12px; font-size: var(--fs-sm); line-height: 1.5;
+  background: var(--rowbg);
+}
+.thread .dt { color: var(--mut); font-variant-numeric: tabular-nums; }
+/* Текущий пост подсвечен, а не выключен: тред — это оглавление, и место в нём
+   должно читаться без наведения. */
+.thread li[aria-current] { background: var(--rowbg-h); }
+.thread .self { color: var(--tx); font-weight: 600; }
 
 /* ─── Реквизиты ─── */
 .addr { display: grid; gap: 6px; margin: 12px 0 24px; }

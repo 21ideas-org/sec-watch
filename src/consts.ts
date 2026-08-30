@@ -27,6 +27,21 @@ export function urgencyClass(tag: string): string {
   return 'u-neutral'; // ярлык, которого мы ещё не знаем
 }
 
+/**
+ * Цвет сигнальной полосы карточки по срочности.
+ *
+ * ⚠️ Незнакомый или отсутствующий ярлык даёт НЕЙТРАЛЬНЫЙ цвет, а не зелёный. Прежний
+ * тернарник в index.astro сваливался в `--ok-fg` на всём, что не красное и не жёлтое, —
+ * то есть обещал «патч есть» по любому ярлыку, которого сайт ещё не знает. Ровно тот
+ * случай, ради которого схема не проверяет словарь.
+ */
+export function urgencyAccent(urgency: string[] = []): string {
+  if (urgency.includes('#эксплуатируется')) return 'var(--crit-fg)';
+  if (urgency.includes('#патча_нет')) return 'var(--warn-fg)';
+  if (urgency.includes('#патч_есть')) return 'var(--ok-fg)';
+  return 'var(--dim)';
+}
+
 /** OG-картинка выбирается КОДОМ по срочности — не моделью. */
 export function ogFor(urgency: string[] = []): string {
   if (urgency.includes('#эксплуатируется')) return '/og/critical.png';

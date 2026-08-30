@@ -3,8 +3,8 @@ import Base from '../layouts/Base.astro';
 import Counter from '../components/Counter.astro';
 import Row from '../components/Row.astro';
 import Urgency from '../components/Urgency.astro';
-import { SITE_NAME, SITE_DESCRIPTION } from '../consts.ts';
-import { allIncidents, own, archive, threadStarts, counterAnchor, stats } from '../lib.ts';
+import { SITE_NAME, SITE_DESCRIPTION, urgencyAccent } from '../consts.ts';
+import { allIncidents, own, archive, counterAnchor, dateShort, stats } from '../lib.ts';
 
 const list = await allIncidents();
 const posts = own(list);
@@ -13,9 +13,7 @@ const rest = posts.slice(1, 6);
 const hist = archive(list).slice(0, 8);
 const anchor = counterAnchor(list);
 const s = stats(list);
-const latestDate = latest?.data.pubDate.toLocaleDateString('ru-RU', {
-  day: '2-digit', month: '2-digit', year: 'numeric',
-});
+const latestDate = latest && dateShort(latest.data.pubDate);
 ---
 <Base title={`${SITE_NAME} — критические оповещения для биткоинеров`} description={SITE_DESCRIPTION}>
   <section class="board panel">
@@ -23,7 +21,10 @@ const latestDate = latest?.data.pubDate.toLocaleDateString('ru-RU', {
     <div class="stats">
       <span class="hot">открыто без патча<b>{s.unpatched}</b></span>
       <span>инцидентов за год<b>{s.lastYear}</b></span>
-      <span>всего в архиве<b>{threadStarts(list).length}</b></span>
+      {/* Оповещения, а не инциденты: у аварии Core Lightning их семь на один
+          инцидент, и обе цифры отвечают на разные вопросы. Прежняя подпись
+          «всего в архиве» повторяла соседнюю цифру и читалась как поломка. */}
+      <span>всего оповещений<b>{posts.length}</b></span>
     </div>
   </section>
 
@@ -31,7 +32,7 @@ const latestDate = latest?.data.pubDate.toLocaleDateString('ru-RU', {
     latest && (
       <section class="latest">
         <div class="eyebrow">Последний инцидент</div>
-        <article class="card panel" style={`border-left-color: var(--${latest.data.urgency.includes('#эксплуатируется') ? 'crit' : latest.data.urgency.includes('#патча_нет') ? 'warn' : 'ok'}-fg)`}>
+        <article class="card panel" style={`border-left-color: ${urgencyAccent(latest.data.urgency)}`}>
           <div class="tags">
             <Urgency tags={latest.data.urgency} />
             {latest.data.audience.map((a) => <span class="aud">{a}</span>)}

@@ -1,0 +1,30 @@
+---
+import { dateDay, type Incident } from '../lib.ts';
+
+/**
+ * Ход инцидента: начало и его апдейты одной лентой.
+ *
+ * ⚠️ Показывается на КАЖДОЙ странице треда, включая начало. Читатель приходит по
+ * ссылке из канала на произвольный пост — чаще на последний, — и без этого блока
+ * страница «BTCPay обновил CLN до v26.06.7» не говорит, что вообще случилось.
+ */
+interface Props { posts: Incident[]; current: string; }
+const { posts, current } = Astro.props;
+---
+{
+  posts.length > 1 && (
+    <div class="thread">
+      <h2>Ход инцидента</h2>
+      <ol>
+        {posts.map((e) => (
+          <li aria-current={e.id === current ? 'true' : undefined}>
+            <span class="dt">{dateDay(e.data.pubDate)}</span>
+            {e.id === current
+              ? <span class="self">{e.data.title}</span>
+              : <a href={`/incidents/${e.id}/`}>{e.data.title}</a>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
+}

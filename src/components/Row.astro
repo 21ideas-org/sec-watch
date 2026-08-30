@@ -1,16 +1,19 @@
 ---
 import Urgency from './Urgency.astro';
-import type { Incident } from '../lib.ts';
+import { dateShort, type Incident } from '../lib.ts';
 interface Props { entry: Incident; }
 const { entry } = Astro.props;
 const d = entry.data;
-const date = d.pubDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const date = dateShort(d.pubDate);
 const href = d.external ? d.sourceUrl : `/incidents/${entry.id}/`;
 ---
 <div class="row">
   <span class="dt">{date}</span>
   <div>
     <div class="ti">
+      {/* Апдейт треда помечен в ленте: без метки семь постов одной аварии Core
+          Lightning читаются как семь инцидентов, то есть как шум. */}
+      {d.parent && <span class="upd" title="апдейт треда">↳</span>}
       {href ? <a href={href} rel={d.external ? 'noopener' : undefined}>{d.title}</a> : d.title}
     </div>
     {d.description && <div class="de">{d.description}</div>}
