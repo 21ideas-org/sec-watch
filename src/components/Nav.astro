@@ -5,7 +5,20 @@ const here = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? '
 ---
 <div class="top">
   <span>{SITE_TITLE} · SEC.21IDEAS.ORG</span>
-  <button class="tt" type="button" data-theme-toggle aria-label="Сменить тему">ТЕМА</button>
+  {/* Иконки те же, что в gm-web. Показывается та тема, в которую переключит клик,
+      а не текущая: кнопка называет результат, а не состояние. */}
+  <button class="tt" type="button" data-theme-toggle aria-label="Сменить тему">
+    <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" /><path d="M12 20v2" />
+      <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+      <path d="M2 12h2" /><path d="M20 12h2" />
+      <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+    </svg>
+    <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+    </svg>
+  </button>
 </div>
 <nav class="nav">
   <a href="/" aria-current={here('/')}>Сводка</a>
@@ -16,16 +29,25 @@ const here = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? '
 
 <script>
   const btn = document.querySelector('[data-theme-toggle]');
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  // Тема сейчас: явный выбор, иначе системная. Ровно тот же порядок, что у токенов
+  // в global.css и у скрипта в BaseHead, — три состояния, а не два.
+  const isDark = () => {
+    const stamped = document.documentElement.getAttribute('data-theme');
+    return stamped ? stamped === 'dark' : media.matches;
+  };
+  const label = () =>
+    btn?.setAttribute('aria-label', isDark() ? 'Включить светлую тему' : 'Включить тёмную тему');
+  label();
+  // Пока явного выбора нет, тему решает система, и она может смениться при открытой
+  // странице: без этого иконка и подпись остались бы от прошлого состояния.
+  media.addEventListener('change', label);
   btn?.addEventListener('click', () => {
-    const root = document.documentElement;
-    const stamped = root.getAttribute('data-theme');
-    const dark = stamped
-      ? stamped === 'dark'
-      : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const next = dark ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
+    const next = isDark() ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
     try {
       localStorage.setItem('sec-theme', next);
     } catch {}
+    label();
   });
 </script>

@@ -110,8 +110,22 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
   font-size: var(--fs-xs); letter-spacing: 0.07em; color: var(--dim);
   padding-bottom: 11px; border-bottom: 1px solid var(--hair);
 }
-.top .tt { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; letter-spacing: inherit; }
+.top .tt {
+  background: none; border: 0; padding: 0; color: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; -webkit-tap-highlight-color: transparent;
+}
 .top .tt:hover { color: var(--tx); }
+.top .tt .icon { width: 16px; height: 16px; display: none; }
+/* Видимость иконок повторяет структуру токенов: тёмная — база, светлая —
+   переопределение, и отдельная ветка на системную светлую без явного выбора.
+   Иначе в третьем состоянии (data-theme не проставлен) не показалась бы ни одна. */
+.top .tt .icon-sun { display: block; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .top .tt .icon-sun { display: none; }
+  :root:not([data-theme="dark"]) .top .tt .icon-moon { display: block; }
+}
+:root[data-theme="light"] .top .tt .icon-sun { display: none; }
+:root[data-theme="light"] .top .tt .icon-moon { display: block; }
 .nav { display: flex; flex-wrap: wrap; gap: 18px; font-size: var(--fs-sm); padding: 12px 0 0; }
 .nav a { color: var(--mut); border-bottom: none; }
 .nav a:hover { color: var(--tx); }
