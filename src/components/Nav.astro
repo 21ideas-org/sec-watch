@@ -4,7 +4,8 @@ const path = Astro.url.pathname;
 const here = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? 'page' : undefined);
 ---
 <div class="top">
-  <span>{SITE_TITLE} · sec.21ideas.org</span>
+  <span>{SITE_TITLE}</span>
+  <span>sec.21ideas.org</span>
   {/* Иконки те же, что в gm-web. Показывается та тема, в которую переключит клик,
       а не текущая: кнопка называет результат, а не состояние. */}
   <button class="tt" type="button" data-theme-toggle aria-label="Сменить тему">

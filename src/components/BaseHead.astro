@@ -35,9 +35,12 @@ const og = new URL(image, SITE_URL);
 {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
 
 <!-- Шрифты свои, из public/fonts: третьей стороны в критическом пути нет.
-     Предзагружаем только кириллицу — латиница нужна цифрам и адресу в шапке,
-     но первый экран держат заголовок и подписи, а они русские. -->
+     Латиница моно предзагружается наравне с кириллицей: цифры лежат именно в ней,
+     а самое крупное на первом экране — счётчик на 54px. Без неё он гарантированно
+     перерисовывается с системного фоллбэка, и это самый заметный сдвиг на странице.
+     Латиница текстового шрифта не предзагружается: бегущий текст ниже сгиба. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-cyrillic-wght-normal.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-latin-wght-normal.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/ibm-plex-sans-cyrillic-wght-normal.woff2" crossorigin />
 
 <!-- Тема до первой отрисовки, иначе светлая мигнёт на тёмной. Штампуем
