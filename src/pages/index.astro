@@ -19,19 +19,22 @@ const latestDate = latest && dateShort(latest.data.pubDate);
   <section class="board panel">
     <Counter since={anchor} />
     <div class="stats">
-      <span class="hot">открыто без патча<b>{s.unpatched}</b></span>
-      <span>инцидентов за год<b>{s.lastYear}</b></span>
+      <span class="hot">без патча<b>{s.unpatched}</b></span>
+      <span>за год<b>{s.lastYear}</b></span>
       {/* Оповещения, а не инциденты: у аварии Core Lightning их семь на один
-          инцидент, и обе цифры отвечают на разные вопросы. Прежняя подпись
-          «всего в архиве» повторяла соседнюю цифру и читалась как поломка. */}
-      <span>всего оповещений<b>{posts.length}</b></span>
+          инцидент, и обе цифры отвечают на разные вопросы. Подпись короткая, как
+          у соседей: полная («всего оповещений») роняла пару на вторую строку на
+          телефоне, а объясняет её всё равно заголовок панели, а не она сама. */}
+      <span>всего<b>{posts.length}</b></span>
     </div>
   </section>
 
   {
     latest && (
       <section class="latest">
-        <div class="eyebrow">Последний инцидент</div>
+        {/* Тот же .sec-h, что у «Ранее» и «Хроник», и так же ведёт туда, куда
+            указывает, — на сам инцидент. Ранг один, значит и вид, и поведение одни. */}
+        <div class="sec-h"><h2><a href={`/incidents/${latest.id}/`}>Последний инцидент</a></h2></div>
         <article class="card panel" style={`border-left-color: ${urgencyAccent(latest.data.urgency)}`}>
           <div class="tags">
             <Urgency tags={latest.data.urgency} />
