@@ -31,11 +31,11 @@ const latestDate = latest && dateShort(latest.data.pubDate);
 
   {
     latest && (
-      <section class="latest">
+      <section class="sec">
         {/* Тот же .sec-h, что у «Ранее» и «Хроник», и так же ведёт туда, куда
             указывает, — на сам инцидент. Ранг один, значит и вид, и поведение одни. */}
         <div class="sec-h"><h2><a href={`/incidents/${latest.id}/`}>Последний инцидент</a></h2></div>
-        <article class="card panel" style={`border-left-color: ${urgencyAccent(latest.data.urgency)}`}>
+        <article class="card panel" style={`--accent: ${urgencyAccent(latest.data.urgency)}`}>
           <div class="tags">
             <Urgency tags={latest.data.urgency} />
             {latest.data.audience.map((a) => <span class="aud">{a}</span>)}
