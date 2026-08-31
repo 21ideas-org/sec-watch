@@ -34,12 +34,11 @@ const og = new URL(image, SITE_URL);
 <meta name="twitter:card" content="summary_large_image" />
 {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-/>
+<!-- Шрифты свои, из public/fonts: третьей стороны в критическом пути нет.
+     Предзагружаем только кириллицу — латиница нужна цифрам и адресу в шапке,
+     но первый экран держат заголовок и подписи, а они русские. -->
+<link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-cyrillic-wght-normal.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/ibm-plex-sans-cyrillic-wght-normal.woff2" crossorigin />
 
 <!-- Тема до первой отрисовки, иначе светлая мигнёт на тёмной. Штампуем
      data-theme ТОЛЬКО при явном выборе: без него решает prefers-color-scheme. -->
