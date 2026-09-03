@@ -1,8 +1,7 @@
 name: deploy
 
-# Публикацию поста делает бот одним PUT в Contents API. Всё, что здесь
-# происходит, стоит секунд в окне между этим PUT и живой страницей —
-# отсюда урезанный путь: ни astro check, ни проверки ссылок (они на PR).
+# Каждый push в main запускает критический path до живой страницы. Поэтому здесь только
+# build/deploy; `astro check` и дополнительные проверки выполняются на PR.
 on:
   push:
     branches: [main]
@@ -13,9 +12,8 @@ permissions:
   pages: write
   id-token: write
 
-# ⚠️ cancel-in-progress: true, в отличие от gm-web.
-# Более поздняя сборка всегда включает содержимое более ранней, поэтому при
-# шторме восемь пушей схлопываются в одну сборку вместо восьми подряд.
+# Более поздняя сборка main включает более ранний content, поэтому backlog deploy jobs
+# схлопывается до последнего snapshot.
 concurrency:
   group: pages
   cancel-in-progress: true

@@ -14,9 +14,9 @@ export const TELEGRAM_URL = 'https://t.me/';
 export const SUPPORT_ONCHAIN = 'bc1q805dq3u6t76nd5av3jdln0vy6zxt4y5djem4s5';
 export const SUPPORT_LN_ADDRESS = 'tony_lightning@coinos.io';
 
-// Ярлыки срочности. Строки совпадают с `config.ts` бота (urgencyTags), но
-// СВЕРЯТЬ их код не может и не должен: неизвестный ярлык обязан отрисоваться
-// нейтрально, а не уронить сборку. Отсюда берётся только цвет и порядок.
+// Legacy urgency labels нужны для backfill/display. После status-axis slice новые files
+// получают их как derived compatibility layer; неизвестное значение остаётся neutral,
+// а не роняет build. Отсюда берутся только цвет и порядок.
 export const URGENCY_ORDER = ['#эксплуатируется', '#патча_нет', '#патч_есть'] as const;
 
 export function urgencyClass(tag: string): string {

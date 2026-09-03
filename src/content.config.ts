@@ -5,12 +5,12 @@ import { z } from 'astro/zod';
 /**
  * ⚠️ Схема проверяет ФОРМУ и НЕ проверяет СЛОВАРЬ.
  *
- * Файлы сюда кладёт бот, а не человек. Упавшая сборка останавливает ВЕСЬ сайт,
- * а не один плохой пост, — для канала оповещений это хуже кривого поля. Поэтому
+ * Сейчас content поддерживается в repository; согласованный target — create-only files
+ * от `sec-watcher-bot`. Упавшая сборка останавливает ВЕСЬ сайт, а не один плохой пост,
+ * поэтому
  * `urgency`, `audience` и `vendor` — свободные строки: неизвестное значение
  * отрисуется нейтрально (см. `urgencyClass`), а расхождение контракта поймает
  * глаз в ленте, а не 404 на всём домене.
- * Тот же урок записан в gm-web/src/content.config.ts про теги.
  */
 const incidents = defineCollection({
   loader: glob({
@@ -28,10 +28,9 @@ const incidents = defineCollection({
     pubDate: z.coerce.date(),
 
     /**
-     * ⚠️ СПИСОК, а не строка, с первого дня — хотя гейт сегодня кладёт сюда
-     * ровно один элемент. Уязвимость умеет быть одновременно пропатченной и
-     * эксплуатируемой, и когда бот научится отдавать два ярлыка, менять
-     * придётся бота, а не сотню постов, ссылки на которые уже уехали в канал.
+     * ⚠️ Legacy compatibility list, не каноническая классификация. Бот уже хранит
+     * четыре независимые status-оси; согласованный site slice добавит их отдельными
+     * optional free-string fields, а `urgency[]` будет выводить детерминированно.
      */
     urgency: z.array(z.string()).default([]),
     audience: z.array(z.string()).default([]),
@@ -52,7 +51,7 @@ const incidents = defineCollection({
     incidentKey: z.string().optional(),
     /** Заполняется у апдейта треда: slug первого поста. */
     parent: z.string().optional(),
-    /** Обратная связка, приезжает после отправки в Telegram. */
+    /** Reserved: первый create-only delivery slice не перезаписывает файл после Telegram. */
     telegramUrl: z.url().optional(),
 
     /**
