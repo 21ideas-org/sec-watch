@@ -13,11 +13,13 @@ Issue обязан содержать применимые решения websit
 
 ## Safety contract
 
-- Content schema проверяет форму, но не закрытый словарь: неизвестное значение должно
-  отрисоваться neutral. Один invalid post не должен останавливать весь site build.
-- `reason`, raw model links и любые URL без bot cross-check никогда не являются
-  public content. Links приходят только из validated `links[]`; hijack banner строится
-  кодом из trusted `vendor`.
+- Content schema проверяет обязательную форму и оставляет status-словари открытыми:
+  неизвестное значение free-string поля отрисовывается neutral. Неверная форма должна
+  останавливать check/build; schema errors не проглатывать.
+- В bot-generated incident content `reason`, raw model links и URL без cross-check не
+  публикуются: ссылки приходят только из validated `links[]`, hijack banner строится
+  кодом из trusted `vendor`. Human-maintained archive отдельно использует доверенный
+  `sourceUrl`; не переносить этот путь в автоматическую доставку.
 - Slug равен basename Markdown file. Папка не входит в route. Никогда не переименовывать
   опубликованный basename/permalink.
 - Incident filename: `<product>-<YYYY-MM-DD>-<short>.md`; date — UTC frozen logical
