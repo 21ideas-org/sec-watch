@@ -389,7 +389,7 @@ a:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
 .thread li[aria-current] { background: var(--rowbg-h); }
 .thread .self { color: var(--tx); font-weight: 600; }
 
-/* ─── Реквизиты (см. CopyBlock.astro; имена классов общие с gm-web) ─── */
+/* ─── Реквизиты ─── */
 .code-wrap { margin: 12px 0 24px; }
 .code-toolbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
 .code-lang { font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); }

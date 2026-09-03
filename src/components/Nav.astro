@@ -6,8 +6,8 @@ const here = (p: string) => (path === p || (p !== '/' && path.startsWith(p)) ? '
 <div class="top">
   <span>{SITE_TITLE}</span>
   <span>sec.21ideas.org</span>
-  {/* Иконки те же, что в gm-web. Показывается та тема, в которую переключит клик,
-      а не текущая: кнопка называет результат, а не состояние. */}
+  {/* Показывается тема, в которую переключит клик, а не текущая: кнопка называет
+      результат, а не состояние. */}
   <button class="tt" type="button" data-theme-toggle aria-label="Сменить тему">
     <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <circle cx="12" cy="12" r="4" />
