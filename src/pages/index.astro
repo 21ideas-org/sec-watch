@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Counter from '../components/Counter.astro';
 import Row from '../components/Row.astro';
 import Urgency from '../components/Urgency.astro';
+import UnknownStatuses from '../components/UnknownStatuses.astro';
 import { SITE_NAME, SITE_DESCRIPTION, urgencyAccent } from '../consts.ts';
 import { allIncidents, own, archive, counterAnchor, dateShort, stats } from '../lib.ts';
 import { displayUrgency } from '../status.ts';
@@ -40,6 +41,7 @@ const latestUrgency = latest ? displayUrgency(latest.data) : [];
         <article class="card panel" style={`--accent: ${urgencyAccent(latestUrgency)}`}>
           <div class="tags">
             <Urgency tags={latestUrgency} />
+            <UnknownStatuses status={latest.data} />
             {latest.data.audience.map((a) => <span class="aud">{a}</span>)}
             <span class="aud when">{latestDate}</span>
           </div>

@@ -1,0 +1,14 @@
+---
+import { unrecognizedStatuses, type StatusPresentationInput } from '../status.ts';
+
+interface Props { status: StatusPresentationInput; }
+const unknown = unrecognizedStatuses(Astro.props.status);
+---
+{
+  unknown.length > 0 && (
+    <span class="status-note">
+      Неизвестная классификация:{' '}
+      {unknown.map(({ axis, value }) => <code>{axis}={value}</code>)}
+    </span>
+  )
+}

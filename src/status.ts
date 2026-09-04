@@ -10,6 +10,25 @@ const EXPLOITATION_LABEL = '#эксплуатируется';
 const FIX_LABELS = ['#патча_нет', '#патч_частичный', '#патч_есть'] as const;
 const CONTROLLED_LABELS = new Set<string>([EXPLOITATION_LABEL, ...FIX_LABELS]);
 
+const KNOWN_STATUSES = {
+  exploitationStatus: ['active', 'observed', 'none_observed', 'unknown'],
+  fixStatus: ['available', 'partial', 'unavailable', 'unknown', 'not_applicable'],
+  updateSufficiency: [
+  'sufficient',
+  'additional_action_required',
+  'not_applicable',
+  'unknown',
+  ],
+  actionTiming: ['now', 'scheduled', 'none'],
+} satisfies Record<StatusAxis, readonly string[]>;
+
+export type StatusAxis = Exclude<keyof StatusPresentationInput, 'urgency'>;
+
+export interface UnrecognizedStatus {
+  axis: StatusAxis;
+  value: string;
+}
+
 function addOnce(labels: string[], label: string | undefined) {
   if (label !== undefined && !labels.includes(label)) labels.push(label);
 }
@@ -49,6 +68,14 @@ export function displayUrgency(input: StatusPresentationInput): string[] {
   }
 
   return labels;
+}
+
+/** Future free-string values stay visible as neutral metadata, never as urgency labels. */
+export function unrecognizedStatuses(input: StatusPresentationInput): UnrecognizedStatus[] {
+  return (Object.keys(KNOWN_STATUSES) as StatusAxis[]).flatMap((axis) => {
+    const value = input[axis];
+    return value !== undefined && !KNOWN_STATUSES[axis].includes(value) ? [{ axis, value }] : [];
+  });
 }
 
 /** Canonical fix state owns statistics when present; legacy tags are old-content fallback. */

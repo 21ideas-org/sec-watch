@@ -191,6 +191,11 @@ test('isolated generated fixtures preserve routes, archive behavior, status rend
 
     assert.ok(!unknownPage.includes('class="u u-ok"'));
     assert.ok(!unknownPage.includes('#патч_есть'));
+    assert.ok(!unknownPage.includes('class="u u-neutral"'));
+    assert.ok(unknownPage.includes('class="status-note"'));
+    assert.ok(unknownPage.includes('fixStatus=future_fix_state'));
+    assert.ok(unknownPage.includes('updateSufficiency=future_sufficiency_state'));
+    assert.ok(unknownPage.includes('actionTiming=future_timing_state'));
     assert.match(index, /<article class="card panel" style="--accent: var\(--dim\)">[\s\S]*?Unknown status fixture/);
     assert.ok(index.includes('<span>всего<b>13</b></span>'), 'archive entries leaked into counters');
 
@@ -201,6 +206,8 @@ test('isolated generated fixtures preserve routes, archive behavior, status rend
     assert.ok(rss.includes('#патч_есть'));
     assert.ok(rss.includes('официальный аккаунт Fixture Vendor угнан'));
     assert.ok(!rss.includes('https://untrusted.example/'));
+    assert.ok(rss.includes('fixStatus=future_fix_state'));
+    assert.ok(!rss.includes('<category>fixStatus='));
     assert.ok(!rss.includes('src/content/archive'));
   });
 

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { ogFor, urgencyAccent, urgencyClass } from '../src/consts.ts';
-import { displayUrgency, isUnpatched } from '../src/status.ts';
+import { displayUrgency, isUnpatched, unrecognizedStatuses } from '../src/status.ts';
 
 test('canonical exploitation and fix axes produce simultaneous independent labels', () => {
   assert.deepEqual(
@@ -28,16 +28,42 @@ test('each missing canonical axis falls back to its legacy presentation only', (
   );
 });
 
-test('unknown canonical values do not inherit a misleading legacy label or green state', () => {
+test('unknown canonical values remain visible without inheriting a legacy label or green state', () => {
   const urgency = displayUrgency({
     urgency: ['#эксплуатируется', '#патч_есть'],
     exploitationStatus: 'future_exploitation_state',
     fixStatus: 'future_fix_state',
+    updateSufficiency: 'future_sufficiency_state',
+    actionTiming: 'future_timing_state',
   });
 
   assert.deepEqual(urgency, []);
+  assert.deepEqual(unrecognizedStatuses({
+    exploitationStatus: 'future_exploitation_state',
+    fixStatus: 'future_fix_state',
+    updateSufficiency: 'future_sufficiency_state',
+    actionTiming: 'future_timing_state',
+  }), [
+    { axis: 'exploitationStatus', value: 'future_exploitation_state' },
+    { axis: 'fixStatus', value: 'future_fix_state' },
+    { axis: 'updateSufficiency', value: 'future_sufficiency_state' },
+    { axis: 'actionTiming', value: 'future_timing_state' },
+  ]);
   assert.equal(urgencyAccent(urgency), 'var(--dim)');
   assert.equal(ogFor(urgency), '/og/default.png');
+});
+
+test('known unknown-like values invent neither urgency labels nor diagnostic metadata', () => {
+  const status = {
+    urgency: [],
+    exploitationStatus: 'unknown',
+    fixStatus: 'not_applicable',
+    updateSufficiency: 'unknown',
+    actionTiming: 'none',
+  };
+
+  assert.deepEqual(displayUrgency(status), []);
+  assert.deepEqual(unrecognizedStatuses(status), []);
 });
 
 test('partial fix has an explicit warning presentation', () => {

@@ -2,7 +2,7 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { SITE_DESCRIPTION, SITE_NAME } from '../consts.ts';
 import { allIncidents, own, type Incident } from '../lib.ts';
-import { displayUrgency } from '../status.ts';
+import { displayUrgency, unrecognizedStatuses } from '../status.ts';
 
 const esc = (t: string) =>
   t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -20,10 +20,15 @@ const esc = (t: string) =>
  * не докликивает, а это единственная строка поста, ради которой он написан.
  */
 function itemContent(e: Incident): string {
+  const unknown = unrecognizedStatuses(e.data);
   return [
     e.data.hijacked &&
       `<p><strong>Похоже, официальный аккаунт ${esc(e.data.vendor ?? 'вендора')} угнан.</strong><br>` +
         'Не переходите по ссылкам из его постов и никуда не вводите seed.</p>',
+    unknown.length > 0 &&
+      `<p>Неизвестная классификация: ${unknown
+        .map(({ axis, value }) => `<code>${esc(axis)}=${esc(value)}</code>`)
+        .join(' ')}</p>`,
     e.data.description && `<p>${esc(e.data.description)}</p>`,
     e.data.action && `<p><strong>Что делать:</strong> ${esc(e.data.action)}</p>`,
     e.body?.trim(),

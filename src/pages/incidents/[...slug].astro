@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Urgency from '../../components/Urgency.astro';
+import UnknownStatuses from '../../components/UnknownStatuses.astro';
 import Thread from '../../components/Thread.astro';
 import { ogFor } from '../../consts.ts';
 import { allIncidents, dateLong, keepFlags, own, thread, threadStart } from '../../lib.ts';
@@ -40,6 +41,7 @@ const urgency = displayUrgency(d);
     {subject && <div class="eyebrow">{subject}</div>}
     <div class="tags">
       <Urgency tags={urgency} />
+      <UnknownStatuses status={d} />
       {d.audience.map((a) => <span class="aud">{a}</span>)}
       <span class="aud when">{date}</span>
     </div>
