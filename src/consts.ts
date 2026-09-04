@@ -17,11 +17,17 @@ export const SUPPORT_LN_ADDRESS = 'tony_lightning@coinos.io';
 // Legacy urgency labels нужны для backfill/display. После status-axis slice новые files
 // получают их как derived compatibility layer; неизвестное значение остаётся neutral,
 // а не роняет build. Отсюда берутся только цвет и порядок.
-export const URGENCY_ORDER = ['#эксплуатируется', '#патча_нет', '#патч_есть'] as const;
+export const URGENCY_ORDER = [
+  '#эксплуатируется',
+  '#патча_нет',
+  '#патч_частичный',
+  '#патч_есть',
+] as const;
 
 export function urgencyClass(tag: string): string {
   if (tag === '#эксплуатируется') return 'u-crit';
   if (tag === '#патча_нет') return 'u-warn';
+  if (tag === '#патч_частичный') return 'u-warn';
   if (tag === '#патч_есть') return 'u-ok';
   return 'u-neutral'; // ярлык, которого мы ещё не знаем
 }
@@ -37,6 +43,7 @@ export function urgencyClass(tag: string): string {
 export function urgencyAccent(urgency: string[] = []): string {
   if (urgency.includes('#эксплуатируется')) return 'var(--crit-fg)';
   if (urgency.includes('#патча_нет')) return 'var(--warn-fg)';
+  if (urgency.includes('#патч_частичный')) return 'var(--warn-fg)';
   if (urgency.includes('#патч_есть')) return 'var(--ok-fg)';
   return 'var(--dim)';
 }
@@ -45,6 +52,7 @@ export function urgencyAccent(urgency: string[] = []): string {
 export function ogFor(urgency: string[] = []): string {
   if (urgency.includes('#эксплуатируется')) return '/og/critical.png';
   if (urgency.includes('#патча_нет')) return '/og/unpatched.png';
+  if (urgency.includes('#патч_частичный')) return '/og/unpatched.png';
   if (urgency.includes('#патч_есть')) return '/og/patched.png';
   return '/og/default.png';
 }

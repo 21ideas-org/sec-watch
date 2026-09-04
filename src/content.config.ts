@@ -39,6 +39,13 @@ const incidents = defineCollection({
     vendor: z.string().optional(),
     action: z.string().optional(),
 
+    /** Canonical classification axes. Values stay open so a new bot value cannot break the site. */
+    exploitationStatus: z.string().optional(),
+    fixStatus: z.string().optional(),
+    updateSufficiency: z.string().optional(),
+    actionTiming: z.string().optional(),
+    hijacked: z.boolean().optional(),
+
     /**
      * Ссылки приходят из вердикта ПОСЛЕ позиционной сверки. Модель не выдаёт
      * URL никогда — сайт лишь показывает то, что уже сверено кодом.

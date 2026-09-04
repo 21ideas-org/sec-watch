@@ -1,11 +1,13 @@
 ---
 import Urgency from './Urgency.astro';
 import { dateShort, type Incident } from '../lib.ts';
+import { displayUrgency } from '../status.ts';
 interface Props { entry: Incident; }
 const { entry } = Astro.props;
 const d = entry.data;
 const date = dateShort(d.pubDate);
 const href = d.external ? d.sourceUrl : `/incidents/${entry.id}/`;
+const urgency = displayUrgency(d);
 ---
 <div class="row">
   <span class="dt">{date}</span>
@@ -21,6 +23,6 @@ const href = d.external ? d.sourceUrl : `/incidents/${entry.id}/`;
   {
     d.external
       ? <span class="ext">{d.source} ↗</span>
-      : <span class="rt"><Urgency tags={d.urgency} /></span>
+      : <span class="rt"><Urgency tags={urgency} /></span>
   }
 </div>
