@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isUnpatched } from './status.ts';
 
 export type Incident = CollectionEntry<'incidents'>;
 
@@ -110,8 +111,6 @@ export function stats(list: Incident[]) {
      * Последний post определяет текущее состояние; `counterAnchor` отдельно отвечает
      * на вопрос, когда incident начался, и использует первый post.
      */
-    unpatched: threadStarts(list).filter((s) =>
-      thread(list, s).at(-1)!.data.urgency.includes('#патча_нет'),
-    ).length,
+    unpatched: threadStarts(list).filter((s) => isUnpatched(thread(list, s).at(-1)!.data)).length,
   };
 }

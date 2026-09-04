@@ -2,9 +2,11 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Urgency from '../../components/Urgency.astro';
+import UnknownStatuses from '../../components/UnknownStatuses.astro';
 import Thread from '../../components/Thread.astro';
 import { ogFor } from '../../consts.ts';
 import { allIncidents, dateLong, keepFlags, own, thread, threadStart } from '../../lib.ts';
+import { displayUrgency } from '../../status.ts';
 
 export async function getStaticPaths() {
   const list = await allIncidents();
@@ -26,18 +28,20 @@ const date = dateLong(d.pubDate);
 // заголовки похожи, а «кто это сказал» различает их сразу. Вендор опускается,
 // когда совпадает с продуктом: «Core Lightning · Core Lightning» — не строка.
 const subject = [d.product, d.vendor !== d.product ? d.vendor : null].filter(Boolean).join(' · ');
+const urgency = displayUrgency(d);
 ---
 <Base
   title={d.title}
   description={d.description}
-  image={ogFor(d.urgency)}
+  image={ogFor(urgency)}
   type="article"
   pubDate={d.pubDate}
 >
   <article class="prose" style="padding-top: 32px">
     {subject && <div class="eyebrow">{subject}</div>}
     <div class="tags">
-      <Urgency tags={d.urgency} />
+      <Urgency tags={urgency} />
+      <UnknownStatuses status={d} />
       {d.audience.map((a) => <span class="aud">{a}</span>)}
       <span class="aud when">{date}</span>
     </div>
@@ -50,6 +54,15 @@ const subject = [d.product, d.vendor !== d.product ? d.vendor : null].filter(Boo
     }
     <h1 set:html={keepFlags(d.title)} />
     {d.description && <p set:html={keepFlags(d.description)} />}
+
+    {
+      d.hijacked && (
+        <aside class="hijack panel" role="alert">
+          <strong>Похоже, официальный аккаунт {d.vendor ?? 'вендора'} угнан.</strong>
+          <p>Не переходите по ссылкам из его постов и никуда не вводите seed.</p>
+        </aside>
+      )
+    }
 
     {
       d.action && (
@@ -65,7 +78,7 @@ const subject = [d.product, d.vendor !== d.product ? d.vendor : null].filter(Boo
     <Thread posts={posts} current={entry.id} />
 
     {
-      d.links.length > 0 && (
+      !d.hijacked && d.links.length > 0 && (
         <div class="links">
           <h2>Первоисточники</h2>
           <ul>

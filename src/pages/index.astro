@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import Counter from '../components/Counter.astro';
 import Row from '../components/Row.astro';
 import Urgency from '../components/Urgency.astro';
+import UnknownStatuses from '../components/UnknownStatuses.astro';
 import { SITE_NAME, SITE_DESCRIPTION, urgencyAccent } from '../consts.ts';
 import { allIncidents, own, archive, counterAnchor, dateShort, stats } from '../lib.ts';
+import { displayUrgency } from '../status.ts';
 
 const list = await allIncidents();
 const posts = own(list);
@@ -14,6 +16,7 @@ const hist = archive(list).slice(0, 8);
 const anchor = counterAnchor(list);
 const s = stats(list);
 const latestDate = latest && dateShort(latest.data.pubDate);
+const latestUrgency = latest ? displayUrgency(latest.data) : [];
 ---
 <Base title={SITE_NAME} description={SITE_DESCRIPTION}>
   <section class="board panel">
@@ -35,9 +38,10 @@ const latestDate = latest && dateShort(latest.data.pubDate);
         {/* Тот же .sec-h, что у «Ранее» и «Хроник», и так же ведёт туда, куда
             указывает, — на сам инцидент. Ранг один, значит и вид, и поведение одни. */}
         <div class="sec-h"><h2><a href={`/incidents/${latest.id}/`}>Последний инцидент</a></h2></div>
-        <article class="card panel" style={`--accent: ${urgencyAccent(latest.data.urgency)}`}>
+        <article class="card panel" style={`--accent: ${urgencyAccent(latestUrgency)}`}>
           <div class="tags">
-            <Urgency tags={latest.data.urgency} />
+            <Urgency tags={latestUrgency} />
+            <UnknownStatuses status={latest.data} />
             {latest.data.audience.map((a) => <span class="aud">{a}</span>)}
             <span class="aud when">{latestDate}</span>
           </div>
