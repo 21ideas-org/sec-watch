@@ -45,8 +45,11 @@ Issue обязан содержать применимые решения websit
   после Telegram delivery.
 - Website create идёт перед Telegram, но bot не ждёт workflow, Pages, DNS или HTTP 200.
   Custom 404 честно покрывает build window.
-- Dry-run не пишет public content. PAT, live seed/state, Pages/DNS/settings и deploy —
-  human rollout, не agent implementation.
+- В approved target live и `--dry-run` bot publications одинаково пишут канонический
+  public incident content в `sec-web/main` для `https://sec.21ideas.org`. Runtime mode
+  меняет только парный Telegram target (`channel` или `dry_channel`) и не выбирает
+  другой website, staging или mode-specific content. PAT, live seed/state,
+  Pages/DNS/settings и deploy — human rollout, не agent implementation.
 
 ## Не менять автономно
 
